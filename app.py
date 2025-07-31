@@ -81,6 +81,8 @@ if "test_counter" not in st.session_state:
 # ------------------------ Test Selection Form ------------------------
 st.subheader("Select Diagnostic Tests")
 
+rerun_needed = False
+
 with st.form(key=f"add_test_form_{st.session_state.test_counter}"):
     test_list = ["-- Select --"] + list(test_data.keys())
     test = st.selectbox("Select a Test", test_list, key=f"test_{st.session_state.test_counter}")
@@ -96,9 +98,13 @@ with st.form(key=f"add_test_form_{st.session_state.test_counter}"):
             if (test, price) not in st.session_state.selected_tests:
                 st.session_state.selected_tests.append((test, price))
                 st.session_state.test_counter += 1
-                st.experimental_rerun()
+                rerun_needed = True
             else:
                 st.warning("This test is already added.")
+
+# Trigger rerun if new test is added
+if rerun_needed:
+    st.experimental_rerun()
 
 # ------------------------ Display Selected Tests and Bill ------------------------
 if st.session_state.selected_tests:
