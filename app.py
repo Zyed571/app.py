@@ -131,22 +131,17 @@ if st.session_state.current_page == 1:
             st.write(f"{test}: ₹{selected_price}")
         st.write(f"### Total Amount: ₹{total_amount}")
 
+        # Save selected tests to session state
+        st.session_state.selected_tests = selected_tests
+
     # Add Next Button to proceed
     if st.button("Next", key="next_page"):
         st.session_state.current_page = 2  # Move to next page
 
 # -------------------- Page 2: Patient Report --------------------
 elif st.session_state.current_page == 2:
-    st.title("Dr. Pujar Hospital Diagnostic Laboratory")
+    st.title("Patient Report")
     st.markdown("---")
-
-    # Display hospital details in the report
-    st.write("### Hospital Information")
-    st.write("**Hospital Name**: Dr. Pujar Hospital Diagnostic Laboratory")
-    st.write("**Address**: Dr. Pujar Road, City XYZ")
-    st.write("**Phone**: +123 456 7890")
-    st.write("**Email**: info@drpujarhospital.com")
-    st.write("---")
 
     # Display patient details
     st.write(f"**Patient Name**: {st.session_state.name}")
@@ -157,18 +152,13 @@ elif st.session_state.current_page == 2:
     if st.session_state.referred_doctors:
         st.write(f"**Referred By**: {', '.join(st.session_state.referred_doctors)}")
     
-    st.write("### Tests & Results:")
+    st.write("### Selected Tests with Prices:")
     
     # Display the selected tests and total amount
     total_amount = 0
-    for test in selected_tests:
+    for test in st.session_state.selected_tests:
         selected_price = test_data[test][0]  # Taking the first price option
         total_amount += selected_price
         st.write(f"{test}: ₹{selected_price}")
-
-    # Total amount
+        
     st.write(f"### Total Amount: ₹{total_amount}")
-
-    # Add Next Button to proceed to final print
-    if st.button("Next", key="final_report"):
-        st.write("Generating the report...")  # Simulating next step
