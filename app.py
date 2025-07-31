@@ -31,25 +31,28 @@ if st.session_state.current_page == 1:
     st.session_state.date = date
 
     # ------------------------ Dynamic Doctor Input ------------------------
-    st.subheader("Referred By Doctor")
+    st.subheader("Referred By Doctor(s)")
 
-    # Doctor options list
-    doctor_options = [
-        ("Dr. Santosh Pujari", "MS (Ayu), ENT, Ph.D"),
-        ("Dr. Vinod JB", "MS (Ayu)"),
-        ("Dr. Avinash Bhavikatti", "M.B.B.S, MS F.S.G.E. Surgical Gastroenterology"),
-        ("Dr. Divya Bhavikatti", "MBBS, MS (OBG)"),
-        ("Dr. Sana Kouser Jamadar", "MBBS, Family Physician"),
-        ("Dr. Vijaykumar Nayak", "MS (Ayu), Ph.D")
-    ]
+    # Doctor options list with names and qualifications
+    doctor_options = {
+        "Dr. Santosh Pujari": "MS (Ayu), ENT, Ph.D",
+        "Dr. Vinod JB": "MS (Ayu)",
+        "Dr. Avinash Bhavikatti": "M.B.B.S, MS, F.S.G.E. Surgical Gastroenterology",
+        "Dr. Divya Bhavikatti": "MBBS, MS (OBG)",
+        "Dr. Sana Kouser Jamadar": "MBBS, Family Physician",
+        "Dr. Vijaykumar Nayak": "MS (Ayu), Ph.D"
+    }
 
-    # Selectbox for selecting the referring doctor
-    doctor_names = [doctor[0] for doctor in doctor_options]
-    selected_doctor = st.selectbox("Select Referred By Doctor", doctor_names)
+    # Multiselect to select multiple doctors
+    selected_doctors = st.multiselect(
+        "Select Referred By Doctor(s)",
+        options=list(doctor_options.keys()),
+        format_func=lambda x: f"{x} ({doctor_options[x]})"
+    )
 
-    # Get the qualifications of the selected doctor
-    doctor_qualifications = dict(doctor_options)[selected_doctor]
-    st.session_state.referred_by = f"{selected_doctor} ({doctor_qualifications})"
+    # Join the selected doctors with qualifications
+    referred_by = ", ".join([f"{doctor} ({doctor_options[doctor]})" for doctor in selected_doctors])
+    st.session_state.referred_by = referred_by
 
     st.markdown("---")
 
