@@ -110,48 +110,51 @@ if st.session_state.current_page == 1:
     if rerun_needed:
         st.experimental_rerun()
 
-    # ------------------------ Next Button ------------------------
-    if st.button("Next", key="next_page_button"):
-        # Save the details to session state
-        st.session_state.name = name
-        st.session_state.age = age
-        st.session_state.sex = sex
-        st.session_state.date = date
-        st.session_state.referred_by = referred_by
+    # ------------------------ Display Selected Tests with Amount ------------------------
+    if st.session_state.selected_tests:
+        st.markdown("### Selected Tests with Amount:")
+        total_amount = 0
+        for i, (test_name, test_price) in enumerate(st.session_state.selected_tests, 1):
+            st.write(f"{i}. {test_name} - ₹{test_price}")
+            total_amount += test_price
 
-        # Move to the next page (Report)
+    # ------------------------ Back Button (Empty Box with Black Boundary) ------------------------
+    st.markdown("---")
+    back_button = st.text_area("", "", height=1, key="back_button", placeholder="Click here to go back to test selection")
+    
+    # Go to Page 2 if user clicks on "Go Back" box
+    if back_button:
         st.session_state.current_page = 2
         st.experimental_rerun()
 
-# -------------------- Page 2: Report --------------------
-if st.session_state.current_page == 2:
-    st.title("Final Bill Report")
+
+# -------------------- Page 2: Report Generation --------------------
+elif st.session_state.current_page == 2:
+    st.title("Patient Bill Report")
     st.markdown("---")
 
-    # Patient and doctor info
-    st.write(f"**Patient Name**: {st.session_state.name}")
-    st.write(f"**Age / Sex**: {st.session_state.age} / {st.session_state.sex}")
-    st.write(f"**Date**: {st.session_state.date.strftime('%d-%m-%Y')}")
-    st.write(f"**Referred By**: {st.session_state.referred_by}")
+    # Show patient details
+    st.subheader("Patient Details")
+    st.write(f"**Patient Name**: {name}")
+    st.write(f"**Age / Sex**: {age} / {sex}")
+    st.write(f"**Date**: {date.strftime('%d-%m-%Y')}")
+    st.write(f"**Referred By**: {referred_by}")
 
-    # Selected tests and final bill
-    st.markdown("### Selected Tests:")
+    # Show selected tests and their prices
+    st.markdown("### Selected Tests with Amount")
     total_amount = 0
     for i, (test_name, test_price) in enumerate(st.session_state.selected_tests, 1):
         st.write(f"{i}. {test_name} - ₹{test_price}")
         total_amount += test_price
 
+    # Show total amount
     st.markdown(f"### Total Amount: ₹{total_amount}")
 
-    # Print button: triggers browser print dialog
-    st.markdown("""
-        <button onclick="window.print()" style="padding:10px 20px; font-size:16px;">Print Bill</button>
-        <br><br>
-    """, unsafe_allow_html=True)
+    # ------------------------ Back Button (Empty Box with Black Boundary) ------------------------
+    st.markdown("---")
+    back_button = st.text_area("", "", height=1, key="back_button_report", placeholder="Click here to go back to test selection")
 
-    # Button to go back to the first page and clear the data
-    if st.button("Go Back to Test Selection"):
-        st.session_state.selected_tests.clear()
-        st.session_state.test_counter = 0
+    # Go back to Page 1 (Test Selection) when user clicks on "Go Back"
+    if back_button:
         st.session_state.current_page = 1
         st.experimental_rerun()
