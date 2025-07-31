@@ -14,9 +14,12 @@ age = st.number_input("Age", min_value=0, max_value=150, step=1)
 sex = st.radio("Sex", ["Male", "Female", "Other"])
 date = st.date_input("Date", value=datetime.now().date())
 
-# ------------------------ Dynamic Doctor Input ------------------------
+# ------------------------ Doctor Referral Input ------------------------
 num_doctors = st.selectbox("How many doctors referred the patient?", range(1, 11), index=0)
-referred_by_list = [st.text_input(f"Referred By Doctor {i+1}", key=f"doc_{i}") for i in range(num_doctors)]
+referred_by_list = [
+    st.text_input(f"Referred By Doctor {i+1}", key=f"doc_{i}")
+    for i in range(num_doctors)
+]
 referred_by = ", ".join([doc for doc in referred_by_list if doc.strip() != ""])
 
 st.markdown("---")
@@ -72,7 +75,7 @@ test_data = {
     "HBA1C": [850],
 }
 
-# ------------------------ Session State Init ------------------------
+# ------------------------ Initialize Session State ------------------------
 if "selected_tests" not in st.session_state:
     st.session_state.selected_tests = []
 
@@ -92,9 +95,9 @@ if test != "-- Select --":
             st.success(f"Added {test} - ₹{selected_price}")
         else:
             st.warning(f"{test} (₹{selected_price}) is already added.")
-        st.experimental_rerun()  # reset dropdowns by rerunning
+        st.rerun()  # ✅ safely resets widgets without direct session override
 
-# ------------------------ Show Selected Tests ------------------------
+# ------------------------ Display Selected Tests ------------------------
 if st.session_state.selected_tests:
     st.markdown("### 📝 Selected Tests:")
     total_amount = 0
@@ -102,7 +105,7 @@ if st.session_state.selected_tests:
         st.write(f"{i}. {t} - ₹{p}")
         total_amount += p
 
-    # ------------------------ Final Bill ------------------------
+    # ------------------------ Final Bill Section ------------------------
     st.markdown("---")
     st.subheader("🧾 Final Bill")
     st.write(f"**Patient Name:** {name}")
@@ -111,14 +114,14 @@ if st.session_state.selected_tests:
     st.write(f"**Referred By:** {referred_by}")
     st.markdown(f"### 💰 Total Amount: ₹{total_amount}")
 
-    # Print button (browser-based)
+    # ------------------------ Print Button ------------------------
     st.markdown("""
         <br>
         <button onclick="window.print()" style="padding:10px 20px;font-size:16px;">🖨️ Print Bill</button>
         <br><br>
     """, unsafe_allow_html=True)
 
-    # Clear Tests Button
+    # ------------------------ Clear All Button ------------------------
     if st.button("🔄 Clear All Tests"):
         st.session_state.selected_tests.clear()
         st.success("Test list cleared.")
