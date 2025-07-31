@@ -93,12 +93,17 @@ if st.session_state.current_page == 1:
         "Dr. Sana Kouser Jamadar (MBBS, Family Physician)",
         "Dr. Vijaykumar Nayak (MS - Ayu, Ph.D)"
     ]
-
+    
+    # Multiselect to select multiple doctors
     selected_doctors = st.multiselect("Select Referred Doctors", doctor_options, key="referred_doctors")
 
-    # Ensure we don't overwrite session state with invalid values
-    if selected_doctors:
-        st.session_state.referred_doctors = selected_doctors
+    # Button to save selected doctors to session state
+    if st.button("Save Doctors"):
+        if selected_doctors:
+            st.session_state.referred_doctors = selected_doctors
+            st.success(f"Selected Doctors: {', '.join(selected_doctors)}")
+        else:
+            st.error("Please select at least one doctor.")
 
     # ------------------------ Test Selection ------------------------
     st.subheader("Select Diagnostic Tests")
@@ -150,4 +155,3 @@ if st.session_state.current_page == 2:
         total_amount += price
 
     st.markdown(f"### Total Amount: ₹{total_amount}")
-
