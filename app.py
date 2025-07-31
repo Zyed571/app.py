@@ -97,13 +97,8 @@ if st.session_state.current_page == 1:
     # Multiselect to select multiple doctors
     selected_doctors = st.multiselect("Select Referred Doctors", doctor_options, key="referred_doctors")
 
-    # Button to save selected doctors to session state
-    if st.button("Save Doctors"):
-        if selected_doctors:
-            st.session_state.referred_doctors = selected_doctors
-            st.success(f"Selected Doctors: {', '.join(selected_doctors)}")
-        else:
-            st.error("Please select at least one doctor.")
+    # Save selected doctors to session state immediately
+    st.session_state.referred_doctors = selected_doctors
 
     # ------------------------ Test Selection ------------------------
     st.subheader("Select Diagnostic Tests")
