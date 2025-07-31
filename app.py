@@ -11,6 +11,8 @@ if "test_counter" not in st.session_state:
     st.session_state.test_counter = 0
 if "current_page" not in st.session_state:
     st.session_state.current_page = 1  # Default to page 1 (test selection)
+if "referred_doctors" not in st.session_state:
+    st.session_state.referred_doctors = []
 
 # -------------------- Page 1: Test Selection --------------------
 if st.session_state.current_page == 1:
@@ -29,6 +31,34 @@ if st.session_state.current_page == 1:
     st.session_state.age = age
     st.session_state.sex = sex
     st.session_state.date = date
+
+    # ------------------------ Doctor Selection ------------------------
+    st.subheader("Select Referred Doctors")
+    
+    doctor_options = [
+        "Dr. Santosh Pujari (MS - Ayu, ENT, Ph.D)",
+        "Dr. Vinod JB (MS - Ayu)",
+        "Dr. Avinash Bhavikatti (M.B.B.S, MS, F.S.G.E. Surgical Gastroenterology)",
+        "Dr. Divya Bhavikatti (MBBS, MS - OBG)",
+        "Dr. Sana Kouser Jamadar (MBBS, Family Physician)",
+        "Dr. Vijaykumar Nayak (MS - Ayu, Ph.D)"
+    ]
+
+    # Multi-selection of doctors
+    selected_doctors = st.multiselect(
+        "Choose the Doctors who referred the patient",
+        options=doctor_options,
+        key="doctor_select"
+    )
+
+    # Display selected doctors
+    if selected_doctors:
+        st.write("### Selected Doctors:")
+        for doctor in selected_doctors:
+            st.write(f"- {doctor}")
+        
+        # Save selected doctors to session state
+        st.session_state.referred_doctors = selected_doctors
 
     # ------------------------ Test Data ------------------------
     test_data = {
@@ -100,7 +130,7 @@ if st.session_state.current_page == 1:
             total_amount += selected_price
             st.write(f"{test}: ₹{selected_price}")
         st.write(f"### Total Amount: ₹{total_amount}")
-        
+
     # Add Next Button to proceed
     if st.button("Next", key="next_page"):
         st.session_state.current_page = 2  # Move to next page
@@ -124,7 +154,9 @@ elif st.session_state.current_page == 2:
     st.write(f"**Date**: {st.session_state.date.strftime('%d-%m-%Y')}")
 
     # Display the referred doctor(s)
-    st.write(f"**Referred By**: {' , '.join(selected_tests)}")  # You can adjust this according to your actual selection
+    if st.session_state.referred_doctors:
+        st.write(f"**Referred By**: {', '.join(st.session_state.referred_doctors)}")
+    
     st.write("### Tests & Results:")
     
     # Display the selected tests and total amount
