@@ -19,15 +19,24 @@ if st.session_state.current_page == 1:
 
     # ------------------------ Patient Details ------------------------
     st.subheader("Enter Patient Details")
-    name = st.text_input("Patient's Name")
-    age = st.number_input("Age", min_value=0, max_value=150, step=1)
-    sex = st.radio("Sex", ["Male", "Female", "Other"])
-    date = st.date_input("Date", value=datetime.now().date())
+    name = st.text_input("Patient's Name", key="patient_name")
+    age = st.number_input("Age", min_value=0, max_value=150, step=1, key="patient_age")
+    sex = st.radio("Sex", ["Male", "Female", "Other"], key="patient_sex")
+    date = st.date_input("Date", value=datetime.now().date(), key="patient_date")
+
+    # Save patient details to session_state
+    st.session_state.name = name
+    st.session_state.age = age
+    st.session_state.sex = sex
+    st.session_state.date = date
 
     # ------------------------ Dynamic Doctor Input ------------------------
-    num_doctors = st.selectbox("How many doctors referred the patient?", range(1, 11), index=0)
+    num_doctors = st.selectbox("How many doctors referred the patient?", range(1, 11), index=0, key="num_doctors")
     referred_by_list = [st.text_input(f"Referred By Doctor {i+1}", key=f"doc_{i}") for i in range(num_doctors)]
     referred_by = ", ".join([doc for doc in referred_by_list if doc.strip() != ""])
+
+    # Save doctor details to session_state
+    st.session_state.referred_by = referred_by
 
     st.markdown("---")
 
@@ -131,11 +140,11 @@ elif st.session_state.current_page == 2:
     st.markdown("---")
     st.subheader("Patient Report")
 
-    # Show patient details
-    st.write(f"**Patient Name**: {name}")
-    st.write(f"**Age / Sex**: {age} / {sex}")
-    st.write(f"**Date**: {date.strftime('%d-%m-%Y')}")
-    st.write(f"**Referred By**: {referred_by}")
+    # Show patient details from session_state
+    st.write(f"**Patient Name**: {st.session_state.name}")
+    st.write(f"**Age / Sex**: {st.session_state.age} / {st.session_state.sex}")
+    st.write(f"**Date**: {st.session_state.date.strftime('%d-%m-%Y')}")
+    st.write(f"**Referred By**: {st.session_state.referred_by}")
 
     # Show selected tests and their prices
     st.markdown("### Selected Tests with Amount")
