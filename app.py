@@ -50,7 +50,13 @@ if st.session_state.current_page == 1:
         format_func=lambda x: f"{x} ({doctor_options[x]})"
     )
 
-    # Join the selected doctors with qualifications
+    # Display selected doctors below the multiselect widget
+    if selected_doctors:
+        st.write("### Selected Doctor(s):")
+        for doctor in selected_doctors:
+            st.write(f"{doctor} ({doctor_options[doctor]})")
+
+    # Join the selected doctors with qualifications for session_state
     referred_by = ", ".join([f"{doctor} ({doctor_options[doctor]})" for doctor in selected_doctors])
     st.session_state.referred_by = referred_by
 
