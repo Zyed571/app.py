@@ -31,12 +31,25 @@ if st.session_state.current_page == 1:
     st.session_state.date = date
 
     # ------------------------ Dynamic Doctor Input ------------------------
-    num_doctors = st.selectbox("How many doctors referred the patient?", range(1, 11), index=0, key="num_doctors")
-    referred_by_list = [st.text_input(f"Referred By Doctor {i+1}", key=f"doc_{i}") for i in range(num_doctors)]
-    referred_by = ", ".join([doc for doc in referred_by_list if doc.strip() != ""])
+    st.subheader("Referred By Doctor")
 
-    # Save doctor details to session_state
-    st.session_state.referred_by = referred_by
+    # Doctor options list
+    doctor_options = [
+        ("Dr. Santosh Pujari", "MS (Ayu), ENT, Ph.D"),
+        ("Dr. Vinod JB", "MS (Ayu)"),
+        ("Dr. Avinash Bhavikatti", "M.B.B.S, MS F.S.G.E. Surgical Gastroenterology"),
+        ("Dr. Divya Bhavikatti", "MBBS, MS (OBG)"),
+        ("Dr. Sana Kouser Jamadar", "MBBS, Family Physician"),
+        ("Dr. Vijaykumar Nayak", "MS (Ayu), Ph.D")
+    ]
+
+    # Selectbox for selecting the referring doctor
+    doctor_names = [doctor[0] for doctor in doctor_options]
+    selected_doctor = st.selectbox("Select Referred By Doctor", doctor_names)
+
+    # Get the qualifications of the selected doctor
+    doctor_qualifications = dict(doctor_options)[selected_doctor]
+    st.session_state.referred_by = f"{selected_doctor} ({doctor_qualifications})"
 
     st.markdown("---")
 
