@@ -118,23 +118,20 @@ if st.session_state.current_page == 1:
             st.write(f"{i}. {test_name} - ₹{test_price}")
             total_amount += test_price
 
-    # ------------------------ Back Button (Empty Box with Black Boundary) ------------------------
-    st.markdown("---")
-    back_button = st.text_area("", "", height=1, key="back_button", placeholder="Click here to go back to test selection")
-    
-    # Go to Page 2 if user clicks on "Go Back" box
-    if back_button:
-        st.session_state.current_page = 2
+    # ------------------------ Next Button ------------------------
+    if st.button("Next"):
+        st.session_state.current_page = 2  # Navigate to page 2 (report generation)
         st.experimental_rerun()
 
 
 # -------------------- Page 2: Report Generation --------------------
 elif st.session_state.current_page == 2:
-    st.title("Patient Bill Report")
+    # Hospital Information
+    st.title("We Care Diagnostic Laboratory")
     st.markdown("---")
+    st.subheader("Patient Report")
 
     # Show patient details
-    st.subheader("Patient Details")
     st.write(f"**Patient Name**: {name}")
     st.write(f"**Age / Sex**: {age} / {sex}")
     st.write(f"**Date**: {date.strftime('%d-%m-%Y')}")
