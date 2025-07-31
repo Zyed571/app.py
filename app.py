@@ -75,26 +75,24 @@ test_data = {
 # ------------------------ Session State Init ------------------------
 if "selected_tests" not in st.session_state:
     st.session_state.selected_tests = []
-if "test_select" not in st.session_state:
-    st.session_state.test_select = "-- Select --"
-if "price_select" not in st.session_state:
-    st.session_state.price_select = None
 
 # ------------------------ Test Selection ------------------------
 st.subheader("🧪 Select Diagnostic Tests")
 
 test_list = list(test_data.keys())
-test = st.selectbox("Choose a Test", ["-- Select --"] + test_list, key="test_select")
+test = st.selectbox("Choose a Test", ["-- Select --"] + test_list, index=0, key="test_select")
 
 if test != "-- Select --":
     price_options = test_data[test]
     selected_price = st.selectbox(f"Select Price for {test}", price_options, key="price_select")
 
     if st.button("✅ Add Test"):
-        st.session_state.selected_tests.append((test, selected_price))
-        st.success(f"Added {test} - ₹{selected_price}")
-        st.session_state.test_select = "-- Select --"  # Reset dropdown
-        st.session_state.price_select = None
+        if (test, selected_price) not in st.session_state.selected_tests:
+            st.session_state.selected_tests.append((test, selected_price))
+            st.success(f"Added {test} - ₹{selected_price}")
+        else:
+            st.warning(f"{test} (₹{selected_price}) is already added.")
+        st.experimental_rerun()  # reset dropdowns by rerunning
 
 # ------------------------ Show Selected Tests ------------------------
 if st.session_state.selected_tests:
@@ -120,6 +118,7 @@ if st.session_state.selected_tests:
         <br><br>
     """, unsafe_allow_html=True)
 
+    # Clear Tests Button
     if st.button("🔄 Clear All Tests"):
         st.session_state.selected_tests.clear()
         st.success("Test list cleared.")
