@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime
 
 # Set page configuration
-st.set_page_config(page_title="Lab Billing System", layout="centered")
+st.set_page_config(page_title="Dr. Pujar Hospital Diagnostic Laboratory Billing System", layout="centered")
 
 # Initialize session state variables if not already done
 if "selected_tests" not in st.session_state:
@@ -14,7 +14,7 @@ if "current_page" not in st.session_state:
 
 # -------------------- Page 1: Test Selection --------------------
 if st.session_state.current_page == 1:
-    st.title("We Care Diagnostic Laboratory Billing System")
+    st.title("Dr. Pujar Hospital Diagnostic Laboratory Billing System")
     st.markdown("---")
 
     # ------------------------ Patient Details ------------------------
@@ -29,38 +29,6 @@ if st.session_state.current_page == 1:
     st.session_state.age = age
     st.session_state.sex = sex
     st.session_state.date = date
-
-    # ------------------------ Dynamic Doctor Input ------------------------
-    st.subheader("Referred By Doctor(s)")
-
-    # Doctor options list with names and qualifications
-    doctor_options = {
-        "Dr. Santosh Pujari": "MS (Ayu), ENT, Ph.D",
-        "Dr. Vinod JB": "MS (Ayu)",
-        "Dr. Avinash Bhavikatti": "M.B.B.S, MS, F.S.G.E. Surgical Gastroenterology",
-        "Dr. Divya Bhavikatti": "MBBS, MS (OBG)",
-        "Dr. Sana Kouser Jamadar": "MBBS, Family Physician",
-        "Dr. Vijaykumar Nayak": "MS (Ayu), Ph.D"
-    }
-
-    # Multiselect to select multiple doctors
-    selected_doctors = st.multiselect(
-        "Select Referred By Doctor(s)",
-        options=list(doctor_options.keys()),
-        format_func=lambda x: f"{x} ({doctor_options[x]})"
-    )
-
-    # Display selected doctors below the multiselect widget
-    if selected_doctors:
-        st.write("### Selected Doctor(s):")
-        for doctor in selected_doctors:
-            st.write(f"{doctor} ({doctor_options[doctor]})")
-
-    # Join the selected doctors with qualifications for session_state
-    referred_by = ", ".join([f"{doctor} ({doctor_options[doctor]})" for doctor in selected_doctors])
-    st.session_state.referred_by = referred_by
-
-    st.markdown("---")
 
     # ------------------------ Test Data ------------------------
     test_data = {
@@ -113,76 +81,62 @@ if st.session_state.current_page == 1:
         "HBA1C": [850],
     }
 
-    # ------------------------ Test Selection Form ------------------------
+    # ------------------------ Test Selection ------------------------
     st.subheader("Select Diagnostic Tests")
 
-    rerun_needed = False
+    # Multi-selection of tests
+    selected_tests = st.multiselect(
+        "Choose Tests to Add",
+        options=list(test_data.keys()),
+        key="test_select"
+    )
 
-    with st.form(key=f"add_test_form_{st.session_state.test_counter}"):
-        test_list = ["-- Select --"] + list(test_data.keys())
-        test = st.selectbox("Select a Test", test_list, key=f"test_{st.session_state.test_counter}")
-        price = None
-        if test != "-- Select --":
-            price = st.selectbox(f"Price for {test}", test_data[test], key=f"price_{st.session_state.test_counter}")
-        submitted = st.form_submit_button("Add Test")
-
-        if submitted:
-            if test == "-- Select --" or price is None:
-                st.warning("Please select a test and price before adding.")
-            else:
-                if (test, price) not in st.session_state.selected_tests:
-                    st.session_state.selected_tests.append((test, price))
-                    st.session_state.test_counter += 1
-                    rerun_needed = True
-                else:
-                    st.warning("This test is already added.")
-
-    # Trigger rerun if new test is added
-    if rerun_needed:
-        st.experimental_rerun()
-
-    # ------------------------ Display Selected Tests with Amount ------------------------
-    if st.session_state.selected_tests:
-        st.markdown("### Selected Tests with Amount:")
+    # Display selected tests with their prices
+    if selected_tests:
+        st.write("### Selected Tests with Prices:")
         total_amount = 0
-        for i, (test_name, test_price) in enumerate(st.session_state.selected_tests, 1):
-            st.write(f"{i}. {test_name} - ₹{test_price}")
-            total_amount += test_price
+        for test in selected_tests:
+            selected_price = test_data[test][0]  # Taking the first price option
+            total_amount += selected_price
+            st.write(f"{test}: ₹{selected_price}")
+        st.write(f"### Total Amount: ₹{total_amount}")
+        
+    # Add Next Button to proceed
+    if st.button("Next", key="next_page"):
+        st.session_state.current_page = 2  # Move to next page
 
-    # ------------------------ Next Button ------------------------
-    if st.button("Next"):
-        st.session_state.current_page = 2  # Navigate to page 2 (report generation)
-        st.experimental_rerun()
-
-
-# -------------------- Page 2: Report Generation --------------------
+# -------------------- Page 2: Patient Report --------------------
 elif st.session_state.current_page == 2:
-    # Hospital Information
-    st.title("We Care Diagnostic Laboratory")
+    st.title("Dr. Pujar Hospital Diagnostic Laboratory")
     st.markdown("---")
-    st.subheader("Patient Report")
 
-    # Show patient details from session_state
+    # Display hospital details in the report
+    st.write("### Hospital Information")
+    st.write("**Hospital Name**: Dr. Pujar Hospital Diagnostic Laboratory")
+    st.write("**Address**: Dr. Pujar Road, City XYZ")
+    st.write("**Phone**: +123 456 7890")
+    st.write("**Email**: info@drpujarhospital.com")
+    st.write("---")
+
+    # Display patient details
     st.write(f"**Patient Name**: {st.session_state.name}")
     st.write(f"**Age / Sex**: {st.session_state.age} / {st.session_state.sex}")
     st.write(f"**Date**: {st.session_state.date.strftime('%d-%m-%Y')}")
-    st.write(f"**Referred By**: {st.session_state.referred_by}")
 
-    # Show selected tests and their prices
-    st.markdown("### Selected Tests with Amount")
+    # Display the referred doctor(s)
+    st.write(f"**Referred By**: {' , '.join(selected_tests)}")  # You can adjust this according to your actual selection
+    st.write("### Tests & Results:")
+    
+    # Display the selected tests and total amount
     total_amount = 0
-    for i, (test_name, test_price) in enumerate(st.session_state.selected_tests, 1):
-        st.write(f"{i}. {test_name} - ₹{test_price}")
-        total_amount += test_price
+    for test in selected_tests:
+        selected_price = test_data[test][0]  # Taking the first price option
+        total_amount += selected_price
+        st.write(f"{test}: ₹{selected_price}")
 
-    # Show total amount
-    st.markdown(f"### Total Amount: ₹{total_amount}")
+    # Total amount
+    st.write(f"### Total Amount: ₹{total_amount}")
 
-    # ------------------------ Back Button (Empty Box with Black Boundary) ------------------------
-    st.markdown("---")
-    back_button = st.text_area("", "", height=1, key="back_button_report", placeholder="Click here to go back to test selection")
-
-    # Go back to Page 1 (Test Selection) when user clicks on "Go Back"
-    if back_button:
-        st.session_state.current_page = 1
-        st.experimental_rerun()
+    # Add Next Button to proceed to final print
+    if st.button("Next", key="final_report"):
+        st.write("Generating the report...")  # Simulating next step
