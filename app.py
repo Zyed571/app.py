@@ -151,3 +151,12 @@ if st.session_state.current_page == 2:
         total_amount += price
 
     st.markdown(f"### Total Amount: ₹{total_amount}")
+    
+    # Signature Option at the Bottom Right
+    st.markdown("<div style='position: fixed; bottom: 10px; right: 10px;'>", unsafe_allow_html=True)
+    st.subheader("Signature:")
+    signature = st.text_input("Sign here (Type your name)", key="signature")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if signature:
+        st.write(f"**Signature**: {signature}")
