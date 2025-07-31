@@ -135,9 +135,6 @@ if st.session_state.current_page == 2:
     st.title("Dr. Pujar Hospital Diagnostic Laboratory Report")
     st.markdown("---")
     
-    # Display hospital name
-    st.markdown("**Hospital Name**: Dr. Pujar Hospital Diagnostic Laboratory")
-    
     # Display patient details and selected tests
     st.write(f"**Patient Name**: {st.session_state.name}")
     st.write(f"**Age / Sex**: {st.session_state.age} / {st.session_state.sex}")
