@@ -93,9 +93,12 @@ if st.session_state.current_page == 1:
         "Dr. Sana Kouser Jamadar (MBBS, Family Physician)",
         "Dr. Vijaykumar Nayak (MS - Ayu, Ph.D)"
     ]
-    
+
     selected_doctors = st.multiselect("Select Referred Doctors", doctor_options, key="referred_doctors")
-    st.session_state.referred_doctors = selected_doctors
+
+    # Ensure we don't overwrite session state with invalid values
+    if selected_doctors:
+        st.session_state.referred_doctors = selected_doctors
 
     # ------------------------ Test Selection ------------------------
     st.subheader("Select Diagnostic Tests")
@@ -147,6 +150,4 @@ if st.session_state.current_page == 2:
         total_amount += price
 
     st.markdown(f"### Total Amount: ₹{total_amount}")
-
-    # No back button as per the request
 
