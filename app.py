@@ -97,8 +97,9 @@ if st.session_state.current_page == 1:
     # Multiselect to select multiple doctors
     selected_doctors = st.multiselect("Select Referred Doctors", doctor_options, key="referred_doctors")
 
-    # Save selected doctors to session state immediately
-    st.session_state.referred_doctors = selected_doctors
+    # Save selected doctors to session state immediately (use the set method for setting mutable types)
+    if selected_doctors != st.session_state.referred_doctors:
+        st.session_state.referred_doctors = selected_doctors
 
     # ------------------------ Test Selection ------------------------
     st.subheader("Select Diagnostic Tests")
